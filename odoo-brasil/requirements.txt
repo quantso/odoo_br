@@ -1,0 +1,8 @@
+pillow==3.4.2
+ofxparse==0.16
+suds-jurko-requests
+python3-cnab
+python3-boleto
+xmlsec
+lxml==4.2.3
+pycnab240

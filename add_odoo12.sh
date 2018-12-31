@@ -72,6 +72,6 @@ sudo chown root: /etc/systemd/system/$odoo_name.service
 
 sudo systemctl daemon-reload
 sudo systemctl start $odoo_name.service
-sudo systemctl status $odoo_name
-
 sudo systemctl enable $odoo_name.service
+
+sudo systemctl status $odoo_name

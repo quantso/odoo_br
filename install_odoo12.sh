@@ -10,7 +10,7 @@ sudo apt-get -y upgrade
 
 echo "Install Python Dependencies for Odoo 12"
 
-sudo apt install python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt1-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less -y
+sudo apt install python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt1-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libffi-dev -y
 
 echo "INSTALL DEPENDENCIES USING PIP3"
 pip3 install Babel decorator docutils ebaysdk feedparser gevent greenlet html2text Jinja2 lxml Mako MarkupSafe mock num2words ofxparse passlib Pillow psutil psycogreen psycopg2 pydot pyparsing PyPDF2 pyserial python-dateutil python-openid pytz pyusb PyYAML qrcode reportlab requests six suds-jurko vatnumber vobject Werkzeug XlsxWriter xlwt xlrd
@@ -138,7 +138,7 @@ After=network.target postgresql.service
 # Ubuntu/Debian convention:
 Type=simple
 User=$username
-ExecStart=/opt/$odoo_name/odoo_br/odoo/odoo-bin -c /etc/$odoo_name.conf
+ExecStart=/opt/$odoo_name/odoo_br/odoo-bin -c /etc/$odoo_name.conf
 StandardOutput=journal+console
 
 [Install]

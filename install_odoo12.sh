@@ -96,7 +96,7 @@ db_user = $username
 
 db_password = False
 
-xmlrpc_port = $odoo_port
+http_port = $odoo_port
 
 logfile = /var/log/$odoo_name/odoo-server.log
 
@@ -130,7 +130,7 @@ echo "Making an odoo service and start it"
 echo "Edit Odoo server file"
 
 echo "[Unit]
-Description=Odoo12
+Description=$odoo_name
 Requires=postgresql.service
 After=network.target postgresql.service
 
@@ -149,6 +149,6 @@ sudo chown root: /etc/systemd/system/$odoo_name.service
 
 sudo systemctl daemon-reload
 sudo systemctl start $odoo_name.service
-sudo systemctl status odoo12
+sudo systemctl status $odoo_name
 
 sudo systemctl enable $odoo_name.service

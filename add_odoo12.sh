@@ -22,7 +22,7 @@ echo "******************************************************"
 
 sudo mkdir /var/log/$odoo_name
 
-sudo chown -R $odoo_name:root /var/log/$odoo_name
+sudo chown -R quantso:root /var/log/$odoo_name
 
 echo "******************************************************"
 echo "EDIT ODOO CONFIGURATION FILE"
@@ -40,7 +40,7 @@ db_port = False
 
 db_user = $odoo_name
 
-db_password = bem-vindo
+db_password = $password
 
 http_port = $odoo_port
 
@@ -48,7 +48,7 @@ logfile = /var/log/$odoo_name/odoo-server.log
 
 addons_path = /opt/quantso/odoo_br/addons,/opt/quantso/odoo_br/odoo/addons,/opt/quantso/odoo_br/odoo-brasil" | sudo tee -a /etc/$odoo_name.conf
 
-sudo chown $odoo_name: /etc/$odoo_name.conf
+sudo chown quantso: /etc/$odoo_name.conf
 
 echo "******************************************************"
 echo "MAKE AN ODOO SERVICE - START AND ENABLE IT"

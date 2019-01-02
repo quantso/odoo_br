@@ -76,7 +76,7 @@ echo "Quando solicitado use a senha padrão: bem-vindo"
 sudo su postgres <<HERE
 cd
 
-createuser -s $username
+createuser -s quantso
 
 createuser -d -P $odoo_name
 
@@ -92,7 +92,7 @@ sudo wget https://pypi.python.org/packages/a8/70/bd554151443fe9e89d9a934a7891aaf
 
 sudo tar zxvf gdata-2.0.18.tar.gz
 
-sudo chown -R $odoo_name: gdata-2.0.18
+sudo chown -R quantso: gdata-2.0.18
 
 sudo -s <<HERE
 cd gdata-2.0.18/
@@ -106,7 +106,7 @@ echo "******************************************************"
 
 sudo mkdir /var/log/$odoo_name
 
-sudo chown -R $odoo_name:root /var/log/$odoo_name
+sudo chown -R quantso:root /var/log/$odoo_name
 
 echo "******************************************************"
 echo "EDIT ODOO CONFIGURATION FILE"
@@ -124,7 +124,7 @@ db_port = False
 
 db_user = $odoo_name
 
-db_password = bem-vindo
+db_password = $password
 
 http_port = $odoo_port
 
@@ -132,7 +132,7 @@ logfile = /var/log/$odoo_name/odoo-server.log
 
 addons_path = /opt/quantso/odoo_br/addons,/opt/quantso/odoo_br/odoo/addons,/opt/quantso/odoo_br/odoo-brasil" | sudo tee -a /etc/$odoo_name.conf
 
-sudo chown $odoo_name: /etc/$odoo_name.conf
+sudo chown quantso: /etc/$odoo_name.conf
 
 echo "******************************************************"
 echo "WKHTMLTOPDF ( Supported Version 0.12.1 ) FOR ODOO"

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "******************************************************"
+echo "START ODOO 12 INSTALL"
+echo "******************************************************"
+
 echo "Update apt source list"
 
 sudo apt-get update
@@ -8,18 +12,27 @@ echo "Install Updates"
 
 sudo apt-get -y upgrade
 
-echo "Install Python Dependencies for Odoo 12"
+echo "******************************************************"
+echo "INSTALL PYTHON DEPENDENCIES FOR ODOO 12"
+echo "******************************************************"
 
-sudo apt install python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt1-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libffi-dev -y
+sudo apt install python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt1-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less -y
 
+echo "******************************************************"
 echo "INSTALL DEPENDENCIES USING PIP3"
+echo "******************************************************"
+
 pip3 install Babel decorator docutils ebaysdk feedparser gevent greenlet html2text Jinja2 lxml Mako MarkupSafe mock num2words ofxparse passlib Pillow psutil psycogreen psycopg2 pydot pyparsing PyPDF2 pyserial python-dateutil python-openid pytz pyusb PyYAML qrcode reportlab requests six suds-jurko vatnumber vobject Werkzeug XlsxWriter xlwt xlrd
 
-echo "Install Python Dependencies for odoo-brasil"
+echo "******************************************************"
+echo "INSTALL PYTHON DEPENDENCIES FOR ODOO-BRASIL"
+echo "******************************************************"
 
-sudo apt-get install -y libxmlsec1-dev pkg-config
+sudo apt-get install -y libxmlsec1-dev pkg-config libffi-dev
 
-echo "Odoo Web Dependencies"
+echo "******************************************************"
+echo "ODOO WEB DEPENDENCIES"
+echo "******************************************************"
 
 sudo apt-get install -y npm
 
@@ -28,12 +41,13 @@ sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 sudo npm install -g less less-plugin-clean-css
 
-sudo apt-get install node-less
+sudo apt-get install node-less -y
 
 sudo python3 -m pip install libsass
 
-
-echo "Install PostgreSQL 9.6+"
+echo "******************************************************"
+echo "INSTALL PostgreSQL 9.6+"
+echo "******************************************************"
 
 sudo apt-get install python3-software-properties
 
@@ -45,21 +59,34 @@ sudo apt-get update
 
 sudo apt-get install postgresql-9.6 -y
 
+echo "******************************************************"
+echo "CONFIGURING POSTGRES AUTHENTICATION"
+echo "******************************************************"
 
-echo "Create Database user for Odoo"
+nrow=$(sudo awk '/"local" is for Unix domain socket connections only/{ print NR; exit }' /etc/postgresql/9.6/main/pg_hba.conf)
+nrow=$(($nrow + 1))
 
-echo "Case doesn't work run it: sudo su - postgres -c 'createuser -s odoo'"
+eval "sudo sed -i '${nrow}s/peer/md5/' /etc/postgresql/9.6/main/pg_hba.conf"
+
+echo "******************************************************"
+echo "CREATE DATABASE USER FOR ODOO"
+echo "******************************************************"
+echo "Quando solicitado use a senha padrão: bem-vindo"
+
 sudo su postgres <<HERE
 cd
 
-createuser -s $odoo_name
-
 createuser -s $username
+
+createuser -d -P $odoo_name
+
 HERE
 
-echo "Install Gdata"
+echo "******************************************************"
+echo "INSTALL GDATA"
+echo "******************************************************"
 
-cd /opt/$odoo_name
+cd /opt/quantso
 
 sudo wget https://pypi.python.org/packages/a8/70/bd554151443fe9e89d9a934a7891aaffc63b9cb5c7d608972919a002c03c/gdata-2.0.18.tar.gz
 
@@ -73,39 +100,43 @@ cd gdata-2.0.18/
 sudo python setup.py install
 HERE
 
-echo "Create Odoo Log File"
+echo "******************************************************"
+echo "CREATE ODOO LOG FILE"
+echo "******************************************************"
 
 sudo mkdir /var/log/$odoo_name
 
 sudo chown -R $odoo_name:root /var/log/$odoo_name
 
-
-echo "Edit Odoo configuration file"
+echo "******************************************************"
+echo "EDIT ODOO CONFIGURATION FILE"
+echo "******************************************************"
 
 echo "[options]
 
 ; This is the password that allows database operations:
 
-admin_passwd = sHv0n9hOrshd)
+admin_passwd = admin
 
 db_host = False
 
 db_port = False
 
-db_user = $username
+db_user = $odoo_name
 
-db_password = False
+db_password = bem-vindo
 
 http_port = $odoo_port
 
 logfile = /var/log/$odoo_name/odoo-server.log
 
-addons_path = /opt/$odoo_name/odoo_br/addons,/opt/$odoo_name/odoo_br/odoo/addons,/opt/$odoo_name/odoo_br/odoo-brasil" | sudo tee -a /etc/$odoo_name.conf
+addons_path = /opt/quantso/odoo_br/addons,/opt/quantso/odoo_br/odoo/addons,/opt/quantso/odoo_br/odoo-brasil" | sudo tee -a /etc/$odoo_name.conf
 
 sudo chown $odoo_name: /etc/$odoo_name.conf
 
-
-echo "WKHTMLTOPDF ( Supported Version 0.12.1 ) for Odoo"
+echo "******************************************************"
+echo "WKHTMLTOPDF ( Supported Version 0.12.1 ) FOR ODOO"
+echo "******************************************************"
 
 sudo wget https://builds.wkhtmltopdf.org/0.12.1.3/wkhtmltox_0.12.1.3-1~bionic_amd64.deb
 
@@ -115,17 +146,19 @@ sudo cp /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
 
 sudo cp /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
 
+echo "******************************************************"
+echo "INSTALL ALL ODOO-BRASIL REQUIREMENTS"
+echo "******************************************************"
 
-echo "Installing all odoo-brasil requirements"
+pip3 install -r /opt/quantso/odoo_br/odoo-brasil/requirements.txt
 
-pip3 install -r /opt/$odoo_name/odoo_br/odoo-brasil/requirements.txt
-
-cd /opt/$odoo_name/odoo_br/py-pkgs/PyTrustNFe
+cd /opt/quantso/odoo_br/py-pkgs/PyTrustNFe
 
 python3 setup.py install
 
-
-echo "Making an odoo service and start it"
+echo "******************************************************"
+echo "MAKE AN ODOO SERVICE - START AND ENABLE IT"
+echo "******************************************************"
 
 echo "Edit Odoo server file"
 
@@ -138,7 +171,7 @@ After=network.target postgresql.service
 # Ubuntu/Debian convention:
 Type=simple
 User=$username
-ExecStart=/opt/$odoo_name/odoo_br/odoo-bin -c /etc/$odoo_name.conf
+ExecStart=/opt/quantso/odoo_br/odoo-bin -c /etc/$odoo_name.conf
 StandardOutput=journal+console
 
 [Install]

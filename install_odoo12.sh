@@ -25,12 +25,6 @@ echo "******************************************************"
 pip3 install Babel decorator docutils ebaysdk feedparser gevent greenlet html2text Jinja2 lxml Mako MarkupSafe mock num2words ofxparse passlib Pillow psutil psycogreen psycopg2 pydot pyparsing PyPDF2 pyserial python-dateutil python-openid pytz pyusb PyYAML qrcode reportlab requests six suds-jurko vatnumber vobject Werkzeug XlsxWriter xlwt xlrd
 
 echo "******************************************************"
-echo "INSTALL PYTHON DEPENDENCIES FOR ODOO-BRASIL"
-echo "******************************************************"
-
-sudo apt-get install -y libxmlsec1-dev pkg-config libffi-dev
-
-echo "******************************************************"
 echo "ODOO WEB DEPENDENCIES"
 echo "******************************************************"
 
@@ -67,6 +61,8 @@ nrow=$(sudo awk '/"local" is for Unix domain socket connections only/{ print NR;
 nrow=$(($nrow + 1))
 
 eval "sudo sed -i '${nrow}s/peer/md5/' /etc/postgresql/9.6/main/pg_hba.conf"
+
+sudo service postgres restart
 
 echo "******************************************************"
 echo "CREATE DATABASE USER FOR ODOO"
@@ -130,7 +126,7 @@ http_port = $odoo_port
 
 logfile = /var/log/$odoo_name/odoo-server.log
 
-addons_path = /opt/quantso/odoo_br/addons,/opt/quantso/odoo_br/odoo/addons,/opt/quantso/odoo_br/odoo-brasil" | sudo tee -a /etc/$odoo_name.conf
+addons_path = /opt/quantso/odoo_br/addons,/opt/quantso/odoo_br/odoo/addons" | sudo tee -a /etc/$odoo_name.conf
 
 sudo chown quantso: /etc/$odoo_name.conf
 
@@ -145,16 +141,6 @@ sudo apt install ./wkhtmltox_0.12.1.3-1~bionic_amd64.deb -y
 sudo cp /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
 
 sudo cp /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
-
-echo "******************************************************"
-echo "INSTALL ALL ODOO-BRASIL REQUIREMENTS"
-echo "******************************************************"
-
-pip3 install -r /opt/quantso/odoo_br/odoo-brasil/requirements.txt
-
-cd /opt/quantso/odoo_br/py-pkgs/PyTrustNFe
-
-python3 setup.py install
 
 echo "******************************************************"
 echo "MAKE AN ODOO SERVICE - START AND ENABLE IT"
